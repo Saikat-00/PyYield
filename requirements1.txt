@@ -1,0 +1,13 @@
+streamlit==1.35.0
+pyspice==1.5
+numpy
+scipy
+scikit-learn
+plotly
+pandas
+matplotlib
+seaborn
+joblib
+fpdf2
+shap
+Pillow
