@@ -46,30 +46,77 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+# ── Sidebar toggle with custom button ──────────
+if "sidebar_open" not in st.session_state:
+    st.session_state.sidebar_open = True
 
-# ── Lock sidebar — prevent collapse button from hiding it ──
 st.markdown("""
 <style>
-/* Hide the collapse arrow button entirely */
+/* Style the toggle button */
+.sidebar-toggle-btn {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 999999;
+    background: #7F77DD;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    transition: background 0.2s;
+}
+.sidebar-toggle-btn:hover {
+    background: #6a62c4;
+}
+
+/* Hide the native Streamlit collapse arrow */
 [data-testid="collapsedControl"] {
     display: none !important;
 }
-
-/* Always keep sidebar visible */
-[data-testid="stSidebar"] {
-    transform: none !important;
-    min-width: 260px !important;
-    max-width: 260px !important;
-    visibility: visible !important;
-}
-
-/* Remove the slide-out animation */
-[data-testid="stSidebar"][aria-expanded="false"] {
-    transform: none !important;
-    margin-left: 0 !important;
-}
 </style>
 """, unsafe_allow_html=True)
+
+# Toggle button in top-left corner
+col_toggle, col_spacer = st.columns([0.05, 0.95])
+with col_toggle:
+    icon = "✕" if st.session_state.sidebar_open else "☰"
+    if st.button(icon, key="sidebar_toggle", help="Show/Hide sidebar"):
+        st.session_state.sidebar_open = not st.session_state.sidebar_open
+        st.rerun()
+
+# Apply sidebar visibility based on state
+if st.session_state.sidebar_open:
+    st.markdown("""
+    <style>
+    [data-testid="stSidebar"] {
+        display: flex !important;
+        visibility: visible !important;
+        width: 260px !important;
+        min-width: 260px !important;
+    }
+    .main .block-container {
+        padding-left: 1rem;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+else:
+    st.markdown("""
+    <style>
+    [data-testid="stSidebar"] {
+        display: none !important;
+        visibility: hidden !important;
+        width: 0px !important;
+        min-width: 0px !important;
+    }
+    .main .block-container {
+        padding-left: 1rem;
+        max-width: 100% !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 # CUSTOM CSS
