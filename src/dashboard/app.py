@@ -47,6 +47,30 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# ── Lock sidebar — prevent collapse button from hiding it ──
+st.markdown("""
+<style>
+/* Hide the collapse arrow button entirely */
+[data-testid="collapsedControl"] {
+    display: none !important;
+}
+
+/* Always keep sidebar visible */
+[data-testid="stSidebar"] {
+    transform: none !important;
+    min-width: 260px !important;
+    max-width: 260px !important;
+    visibility: visible !important;
+}
+
+/* Remove the slide-out animation */
+[data-testid="stSidebar"][aria-expanded="false"] {
+    transform: none !important;
+    margin-left: 0 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # ─────────────────────────────────────────────
 # CUSTOM CSS
 # ─────────────────────────────────────────────
