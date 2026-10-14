@@ -46,77 +46,110 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-# ── Sidebar toggle with custom button ──────────
+
+# ── Sidebar state ──────────────────────────────
 if "sidebar_open" not in st.session_state:
     st.session_state.sidebar_open = True
 
-st.markdown("""
+# ── All CSS in one block ───────────────────────
+st.markdown(f"""
 <style>
-/* Style the toggle button */
-.sidebar-toggle-btn {
-    position: fixed;
-    top: 14px;
-    left: 14px;
-    z-index: 999999;
-    background: #7F77DD;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 6px 12px;
-    font-size: 18px;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    transition: background 0.2s;
-}
-.sidebar-toggle-btn:hover {
-    background: #6a62c4;
-}
+/* Force dark sidebar background always */
+section[data-testid="stSidebar"] {{
+    background-color: #161625 !important;
+    border-right: 1px solid #2d2d50 !important;
+    display: {"flex" if st.session_state.sidebar_open else "none"} !important;
+    min-width: 260px !important;
+    max-width: 260px !important;
+}}
 
-/* Hide the native Streamlit collapse arrow */
-[data-testid="collapsedControl"] {
+/* All sidebar text visible */
+section[data-testid="stSidebar"],
+section[data-testid="stSidebar"] p,
+section[data-testid="stSidebar"] span,
+section[data-testid="stSidebar"] label,
+section[data-testid="stSidebar"] div {{
+    color: #e8e8f0 !important;
+}}
+
+/* Sidebar section headings */
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {{
+    color: #ffffff !important;
+}}
+
+/* Radio button text */
+section[data-testid="stSidebar"] .stRadio label p {{
+    color: #e8e8f0 !important;
+    font-size: 14px !important;
+}}
+
+/* Selected radio */
+section[data-testid="stSidebar"] .stRadio [aria-checked="true"] p {{
+    color: #7F77DD !important;
+    font-weight: 600 !important;
+}}
+
+/* Slider labels */
+section[data-testid="stSidebar"] .stSlider label p {{
+    color: #9090b8 !important;
+}}
+
+/* Slider value */
+section[data-testid="stSidebar"] .stSlider [data-testid="stMarkdownContainer"] p {{
+    color: #7F77DD !important;
+    font-weight: bold !important;
+}}
+
+/* Caption text */
+section[data-testid="stSidebar"] .stCaptionContainer p {{
+    color: #6060a0 !important;
+}}
+
+/* Horizontal rule */
+section[data-testid="stSidebar"] hr {{
+    border-color: #2d2d50 !important;
+}}
+
+/* Hide native Streamlit collapse arrow */
+[data-testid="collapsedControl"] {{
     display: none !important;
+}}
+
+/* Expand main content when sidebar hidden */
+{"" if st.session_state.sidebar_open else """
+.main .block-container {
+    max-width: 100% !important;
+    padding-left: 1rem !important;
 }
+"""}
+
+/* Toggle button */
+div[data-testid="stButton"] button {{
+    background-color: #7F77DD !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 18px !important;
+    width: 38px !important;
+    height: 38px !important;
+    padding: 0px !important;
+    line-height: 1 !important;
+}}
+div[data-testid="stButton"] button:hover {{
+    background-color: #6a62c4 !important;
+}}
 </style>
 """, unsafe_allow_html=True)
 
-# Toggle button in top-left corner
-col_toggle, col_spacer = st.columns([0.05, 0.95])
-with col_toggle:
-    icon = "✕" if st.session_state.sidebar_open else "☰"
-    if st.button(icon, key="sidebar_toggle", help="Show/Hide sidebar"):
+# ── Toggle button ──────────────────────────────
+col_btn, col_rest = st.columns([0.04, 0.96])
+with col_btn:
+    label = "✕" if st.session_state.sidebar_open else "☰"
+    if st.button(label, key="sidebar_toggle"):
         st.session_state.sidebar_open = not st.session_state.sidebar_open
         st.rerun()
-
-# Apply sidebar visibility based on state
-if st.session_state.sidebar_open:
-    st.markdown("""
-    <style>
-    [data-testid="stSidebar"] {
-        display: flex !important;
-        visibility: visible !important;
-        width: 260px !important;
-        min-width: 260px !important;
-    }
-    .main .block-container {
-        padding-left: 1rem;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-else:
-    st.markdown("""
-    <style>
-    [data-testid="stSidebar"] {
-        display: none !important;
-        visibility: hidden !important;
-        width: 0px !important;
-        min-width: 0px !important;
-    }
-    .main .block-container {
-        padding-left: 1rem;
-        max-width: 100% !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 # CUSTOM CSS
